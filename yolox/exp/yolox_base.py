@@ -9,7 +9,7 @@ import torch
 import torch.distributed as dist
 import torch.nn as nn
 
-from .base_exp import BaseExp
+from yolox.exp.base_exp import BaseExp
 
 
 class Exp(BaseExp):
@@ -29,21 +29,22 @@ class Exp(BaseExp):
         # ---------------- dataloader config ---------------- #
         # set worker to 4 for shorter dataloader init time
         # If your training process cost many memory, reduce this value.
-        self.data_num_workers = 4
+        self.data_num_workers = 1
         self.input_size = (640, 640)  # (height, width)
         # Actual multiscale ranges: [640 - 5 * 32, 640 + 5 * 32].
         # To disable multiscale training, set the value to 0.
         self.multiscale_range = 5
         # You can uncomment this line to specify a multiscale range
-        # self.random_size = (14, 26)
+        self.random_size = (14, 26)
         # dir of dataset images, if data_dir is None, this project will use `datasets` dir
-        self.data_dir = None
+        self.train_data_dir = 'E:/competition/ICME2022/data/round_1/train/train'
+        self.val_data_dir = 'E:/competition/ICME2022/data/round_1/train/val'
         # name of annotation file for training
         self.train_ann = "instances_train2017.json"
         # name of annotation file for evaluation
         self.val_ann = "instances_val2017.json"
         # name of annotation file for testing
-        self.test_ann = "instances_test2017.json"
+        self.test_ann = "instances_val2017.json"
 
         # --------------- transform config ----------------- #
         # prob of applying mosaic aug
@@ -67,9 +68,9 @@ class Exp(BaseExp):
 
         # --------------  training config --------------------- #
         # epoch number used for warmup
-        self.warmup_epochs = 5
+        self.warmup_epochs = 5  # 
         # max training epoch
-        self.max_epoch = 300
+        self.max_epoch = 1    # 
         # minimum learning rate during warmup
         self.warmup_lr = 0
         self.min_lr_ratio = 0.05
@@ -143,7 +144,7 @@ class Exp(BaseExp):
 
         with wait_for_the_master():
             dataset = COCODataset(
-                data_dir=self.data_dir,
+                data_dir=self.train_data_dir,
                 json_file=self.train_ann,
                 img_size=self.input_size,
                 preproc=TrainTransform(
@@ -275,9 +276,9 @@ class Exp(BaseExp):
         from yolox.data import COCODataset, ValTransform
 
         valdataset = COCODataset(
-            data_dir=self.data_dir,
+            data_dir=self.val_data_dir,
             json_file=self.val_ann if not testdev else self.test_ann,
-            name="val2017" if not testdev else "test2017",
+            name="images",
             img_size=self.test_size,
             preproc=ValTransform(legacy=legacy),
         )

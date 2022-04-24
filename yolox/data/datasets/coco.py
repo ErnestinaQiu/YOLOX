@@ -41,7 +41,7 @@ class COCODataset(Dataset):
         self,
         data_dir=None,
         json_file="instances_train2017.json",
-        name="train2017",
+        name="images",
         img_size=(416, 416),
         preproc=None,
         cache=False,
@@ -187,7 +187,6 @@ class COCODataset(Dataset):
 
     def load_image(self, index):
         file_name = self.annotations[index][3]
-
         img_file = os.path.join(self.data_dir, self.name, file_name)
 
         img = cv2.imread(img_file)

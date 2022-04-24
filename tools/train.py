@@ -126,6 +126,7 @@ if __name__ == "__main__":
     if not args.experiment_name:
         args.experiment_name = exp.exp_name
 
+    args.devices = get_num_devices()
     num_gpu = get_num_devices() if args.devices is None else args.devices
     assert num_gpu <= get_num_devices()
 
